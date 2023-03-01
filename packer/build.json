@@ -1,0 +1,33 @@
+{   
+    "builders":[
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `AWS_ACCESS_KEY_ID`}}",
+            "secret_key": "{{user `AWS_SECRET_ACCESS_KEY`}}",
+            "region": "us-east-1",
+            "source_ami": "ami-0574da719dca65348",
+            "instance_type": "t2.micro",
+            "ssh_username": "ubuntu",
+            "ami_name": "ec2-build-deploy",
+            "ami_description": "Instala o docker e sobe um container de uma aplicação nodejs pelo docker compose",
+            "associate_public_ip_address": true
+        }   
+    ],
+    "provisioners": [
+        {
+          "type": "file",
+          "source": "../ansible",
+          "destination": "/tmp/ansible"
+        },
+        {
+            "type": "shell",
+            "inline": [
+              "ls /tmp",
+              "ls /tmp/ansible",
+              "sudo apt update",
+              "sudo apt -y install ansible git",
+              "ansible-playbook --connection=local /tmp/ansible/playbook.yml"
+            ]
+          }
+      ]
+}
